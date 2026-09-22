@@ -1,0 +1,22 @@
+main:
+  params: [args]
+  steps:
+    - validate_input:
+        switch:
+          - condition: $${not("source_bucket" in args)}
+            raise: "source_bucket is required"
+          - condition: $${not("source_object" in args)}
+            raise: "source_object is required"
+          - condition: $${not("target_bucket" in args)}
+            raise: "target_bucket is required"
+    - call_cloud_run:
+        call: http.post
+        args:
+          url: "${cloud_run_url}/transfer"
+          auth:
+            type: OIDC
+          body: $${args}
+          timeout: 300
+        result: response
+    - return_result:
+        return: $${response.body}
