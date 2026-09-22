@@ -1,0 +1,6 @@
+project_id                 = "pjt-c-admin"
+region                     = "asia-northeast3"
+artifact_repository        = "ar-wf-gcs-poc"
+run_service_account_id     = "sa-run-gcs-poc"
+workflow_service_account_id = "sa-workflow-gcs-poc"
+force_destroy_buckets      = true
