@@ -17,12 +17,18 @@ terraform -chdir="${FOUNDATION_DIR}" apply -auto-approve \
 
 IMAGE_BASE="$(terraform -chdir="${FOUNDATION_DIR}" output -raw artifact_image_base)"
 IMAGE_URI="${IMAGE_BASE}:${IMAGE_TAG}"
+SOURCE_BUCKET="$(terraform -chdir="${FOUNDATION_DIR}" output -raw source_bucket)"
+CLOUDBUILD_STAGING="gs://${SOURCE_BUCKET}/cloudbuild-source"
 
 printf '\n[2/4] Cloud Build -> Artifact Registry\n'
 echo "IMAGE_URI=${IMAGE_URI}"
+echo "CLOUDBUILD_STAGING=${CLOUDBUILD_STAGING}"
+
 gcloud builds submit "${ROOT_DIR}/cloud-run" \
   --project="${PROJECT_ID}" \
   --region="${REGION}" \
+  --gcs-source-staging-dir="${CLOUDBUILD_STAGING}" \
+  --default-buckets-behavior="regional-user-owned-bucket" \
   --config="${ROOT_DIR}/cloud-run/cloudbuild.yaml" \
   --substitutions="_IMAGE_URI=${IMAGE_URI}"
 
