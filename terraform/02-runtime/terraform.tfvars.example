@@ -1,0 +1,7 @@
+project_id                  = "pjt-c-admin"
+region                      = "asia-northeast3"
+image_uri                   = "asia-northeast3-docker.pkg.dev/pjt-c-admin/ar-wf-gcs-poc/gcs-transfer:1.0.0"
+cloud_run_service_name      = "run-gcs-transfer"
+workflow_name               = "wf-gcs-transfer"
+run_service_account_id      = "sa-run-gcs-poc"
+workflow_service_account_id = "sa-workflow-gcs-poc"
