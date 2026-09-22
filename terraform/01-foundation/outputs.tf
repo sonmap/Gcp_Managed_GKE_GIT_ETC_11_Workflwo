@@ -29,3 +29,8 @@ output "run_service_account" {
 output "workflow_service_account" {
   value = google_service_account.workflow.email
 }
+
+output "workflows_service_agent" {
+  description = "Google-managed Cloud Workflows service agent"
+  value       = google_project_service_identity.workflows.email
+}
