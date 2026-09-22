@@ -9,7 +9,7 @@ from pathlib import Path
 from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel, Field
 
-app = FastAPI(title="GCS transfer PoC", version="1.0.0")
+app = FastAPI(title="GCS transfer PoC", version="1.0.1")
 
 
 class TransferRequest(BaseModel):
@@ -54,7 +54,7 @@ def transfer(req: TransferRequest) -> dict:
     started_at = datetime.now(timezone.utc).isoformat()
 
     source_ls = run_command(
-        ["gcloud", "storage", "ls", "--long", source_uri, "--format=json"]
+        ["gcloud", "storage", "ls", "--long", source_uri]
     )
     if source_ls["returncode"] != 0:
         raise HTTPException(
@@ -81,7 +81,7 @@ def transfer(req: TransferRequest) -> dict:
         )
 
     target_ls = run_command(
-        ["gcloud", "storage", "ls", "--long", target_uri, "--format=json"]
+        ["gcloud", "storage", "ls", "--long", target_uri]
     )
 
     result = {
