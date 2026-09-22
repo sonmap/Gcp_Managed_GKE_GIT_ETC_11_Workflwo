@@ -34,8 +34,8 @@ resource "google_cloud_run_v2_service" "transfer" {
   }
 
   template {
-    service_account = local.run_sa_email
-    timeout         = "300s"
+    service_account                  = local.run_sa_email
+    timeout                          = "300s"
     max_instance_request_concurrency = 5
 
     scaling {
@@ -56,6 +56,13 @@ resource "google_cloud_run_v2_service" "transfer" {
       env {
         name  = "APP_ENV"
         value = "poc"
+      }
+
+      # gcloud inside the Cloud Run container uses the attached service identity
+      # and this project as its default project context.
+      env {
+        name  = "CLOUDSDK_CORE_PROJECT"
+        value = var.project_id
       }
     }
   }
