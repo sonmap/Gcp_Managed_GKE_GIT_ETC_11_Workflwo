@@ -6,10 +6,19 @@ terraform {
       source  = "hashicorp/google"
       version = ">= 7.0, < 9.0"
     }
+    google-beta = {
+      source  = "hashicorp/google-beta"
+      version = ">= 7.0, < 9.0"
+    }
   }
 }
 
 provider "google" {
+  project = var.project_id
+  region  = var.region
+}
+
+provider "google-beta" {
   project = var.project_id
   region  = var.region
 }
@@ -41,6 +50,20 @@ resource "google_project_service" "required" {
   project            = var.project_id
   service            = each.value
   disable_on_destroy = false
+}
+
+# Workflows has a Google-managed service agent that is different from the
+# user-managed Workflow runtime service account below. In some projects the
+# first workflow deployment can race with automatic service-agent creation and
+# fail with: "Workflows service agent does not exist".
+# Generate the service identity explicitly during foundation provisioning.
+resource "google_project_service_identity" "workflows" {
+  provider = google-beta
+
+  project = var.project_id
+  service = "workflows.googleapis.com"
+
+  depends_on = [google_project_service.required["workflows.googleapis.com"]]
 }
 
 resource "google_storage_bucket" "source" {
